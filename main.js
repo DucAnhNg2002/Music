@@ -36,6 +36,17 @@ const app = {
         }
     ],
 
+    method: {
+        removeActive: function(index) {
+            if(app.listSongs[index].classList.contains('active')) {
+                app.listSongs[index].classList.remove('active');
+            }
+        },
+        addActive: function(index) {
+            app.listSongs[index].classList.add('active');
+        }
+    },
+
     start: function() {
         this.defineProperties();
         this.render();
@@ -49,15 +60,22 @@ const app = {
                 return this.songs[this.currentIndex];
             }
         })
+        Object.defineProperty(this,'listSongs',{
+            get: function() {
+                return $$('.song');
+            }
+        })
     },
 
     loadCurrtentSong: function() {
+        this.method.addActive(this.currentIndex);
         heading.innerHTML = this.currentSong.name;
         cdthumb.style.backgroundImage = `url(${this.currentSong.image})`;
         audio.src = this.currentSong.path;
     },
 
     nextSong: function() {
+        this.method.removeActive(this.currentIndex);
         this.currentIndex++;
             if(this.currentIndex >= this.songs.length) {
                 this.currentIndex = 0;
@@ -66,6 +84,7 @@ const app = {
     },
 
     preSong: function() {
+        this.method.removeActive(this.currentIndex);
         this.currentIndex--;
         if(this.currentIndex < 0) {
             this.currentIndex = this.songs.length-1;
@@ -74,6 +93,7 @@ const app = {
     },
 
     randomSong: function() {
+        this.method.removeActive(this.currentIndex);
         while(true) {
             let value = Math.floor(Math.random()*this.songs.length);
             if(value != this.currentIndex) {
@@ -104,6 +124,15 @@ const app = {
     },
 
     handleEvent: function() {
+            // Xử lý CD quay tròn
+        const cdThumbAnimate = cdthumb.animate([
+            { transform : 'rotate(360deg)' }
+        ], {
+            duration: 10000,
+            iteration: Infinity
+        });
+        cdThumbAnimate.pause();
+        
             // Xử lý phóng to, thu nhỏ
         const cdWidth = cd.offsetWidth;
         document.onscroll = () => {
@@ -126,9 +155,11 @@ const app = {
             // Xử lý khi click play
         btnPlay.onclick = function() {
             if (app.isPlaying == false) {
+                cdThumbAnimate.play();
                 audio.play();
 
             } else {
+                cdThumbAnimate.pause();
                 audio.pause();
             }
         }
@@ -178,15 +209,20 @@ const app = {
             const rate = progress.value / progress.max;
             audio.currentTime = rate*audio.duration;
         }
+        
             // Xử lý khi click playlist
-        list.forEach(function(song){
-            console.log(song.innerHTML);
-            // song.addEventListener('click',() => {
-            //     console.log(song.innerHTML);
-            // });
-            song.onclick = function() {
-                console.log(song.innerHTML);
-            }
+        const listSongs = this.listSongs;
+        listSongs.forEach(function(song,index) {
+            song.addEventListener('click',(e) => {
+            // loại bỏ active
+                app.method.removeActive(app.currentIndex);
+            // thay đổi bài hát
+                app.currentIndex = index;
+                app.loadCurrtentSong();
+                audio.play();
+            // set active
+                app.method.addActive(app.currentIndex);
+            });
         });
     }
 };
@@ -205,7 +241,5 @@ const btnPlay = $('.btn.btn-toggle-play');
 const btnNext = $('.btn.btn-next');
 const btnRandom = $('.btn.btn-random');
 const progress = $('#progress');
-
-const list = $$('.song');
 
 app.start();
