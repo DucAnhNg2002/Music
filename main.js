@@ -202,6 +202,7 @@ const app = {
             }
             progress.onmousedown = function(e) {
                 intervalId = setInterval(function(){
+                    i++;
                 }, 10);
             };
             progress.onmouseup = function() {
