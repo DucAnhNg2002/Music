@@ -128,7 +128,7 @@ const app = {
         const cdThumbAnimate = cdthumb.animate([
             { transform : 'rotate(360deg)' }
         ], {
-            duration: 10000,
+            duration: 20000,
             iterations: Infinity,
         });
         cdThumbAnimate.pause();
@@ -198,7 +198,7 @@ const app = {
                 const rate = progress.value / progress.max;
                 audio.currentTime = rate*audio.duration;
             }
-            if(Math.abs(timeE1-timeE2) > 1500) {
+            if(Math.abs(timeE1-timeE2) > 2000) {
                 const progressPercent = audio.currentTime / audio.duration * 100;
                 if(!isNaN(progressPercent)) {
                     progress.value = progressPercent;
@@ -249,3 +249,17 @@ const btnRandom = $('.btn.btn-random');
 const progress = $('#progress');
 
 app.start();
+
+cdthumb.addEventListener('mousedown',(e)=>{
+    console.log(e.type);
+    if(e.type == 'mouseup') {
+        alert('hold');
+    }
+})
+
+cdthumb.addEventListener('mouseup',(e)=>{
+    console.log(e.type);
+    if(e.type == 'mouseup') {
+        alert('hold');
+    }
+})
