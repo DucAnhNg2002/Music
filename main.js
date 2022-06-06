@@ -260,15 +260,3 @@ const progress = $('#progress');
 
 app.start();
 
-// var t1 = 0, t2 = 0;
-// cdthumb.addEventListener('mousedown',(e1)=>{
-//     t1 = e1.timeStamp;
-//     cdthumb.addEventListener('mouseup',(e2)=>{
-//         t2 = e2.timeStamp;
-//         if(Math.abs(t1-t2) > 300) {
-//             console.log("GIU CHUOT");
-//         }
-//     })
-//     console.log("YES");    
-// })
-
