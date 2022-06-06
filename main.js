@@ -129,7 +129,7 @@ const app = {
             { transform : 'rotate(360deg)' }
         ], {
             duration: 10000,
-            iteration: Infinity
+            iterations: Infinity,
         });
         cdThumbAnimate.pause();
         
@@ -171,6 +171,7 @@ const app = {
             else {
                 app.nextSong();
             }
+            cdThumbAnimate.play();
             audio.play();
         }
             // Xử lý khi click bài ranmdom
@@ -189,27 +190,31 @@ const app = {
             player.classList.remove('playing');
         }
 
-        audio.ontimeupdate = function() {
+        let timeE1 = 0, timeE2 = 0;
+        audio.ontimeupdate = function(e1) {
+            timeE1 = e1.timeStamp;
+            progress.onchange = (e2) => {
+                timeE2 = e2.timeStamp;
+                const rate = progress.value / progress.max;
+                audio.currentTime = rate*audio.duration;
+            }
+            if(Math.abs(timeE1-timeE2) > 1500) {
                 const progressPercent = audio.currentTime / audio.duration * 100;
                 if(!isNaN(progressPercent)) {
                     progress.value = progressPercent;
-            }
+                }
+            }  
         }
         
         audio.onended = function() {
             if(app.isRepeat) {
+                cdThumbAnimate.play();
                 audio.play();
             }
             else {
                 btnNext.click();
             }
         }
-
-        progress.onchange = (e) => {
-            const rate = progress.value / progress.max;
-            audio.currentTime = rate*audio.duration;
-        }
-        
             // Xử lý khi click playlist
         const listSongs = this.listSongs;
         listSongs.forEach(function(song,index) {
@@ -219,6 +224,7 @@ const app = {
             // thay đổi bài hát
                 app.currentIndex = index;
                 app.loadCurrtentSong();
+                cdThumbAnimate.play();
                 audio.play();
             // set active
                 app.method.addActive(app.currentIndex);
