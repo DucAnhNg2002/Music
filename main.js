@@ -191,6 +191,8 @@ const app = {
         }
 
         let timeE1 = 0, timeE2 = 0;
+        var intervalId;
+        var i = 0;
         audio.ontimeupdate = function(e1) {
             timeE1 = e1.timeStamp;
             progress.onchange = (e2) => {
@@ -198,7 +200,15 @@ const app = {
                 const rate = progress.value / progress.max;
                 audio.currentTime = rate*audio.duration;
             }
-            if(Math.abs(timeE1-timeE2) > 2000) {
+            progress.onmousedown = function(e) {
+                intervalId = setInterval(function(){
+                }, 10);
+            };
+            progress.onmouseup = function() {
+                clearInterval(intervalId);
+                i = 0;
+            }
+            if(Math.abs(timeE1-timeE2) > 2000 && i === 0) {
                 const progressPercent = audio.currentTime / audio.duration * 100;
                 if(!isNaN(progressPercent)) {
                     progress.value = progressPercent;
@@ -250,16 +260,15 @@ const progress = $('#progress');
 
 app.start();
 
-cdthumb.addEventListener('mousedown',(e)=>{
-    console.log(e.type);
-    if(e.type == 'mouseup') {
-        alert('hold');
-    }
-})
+// var t1 = 0, t2 = 0;
+// cdthumb.addEventListener('mousedown',(e1)=>{
+//     t1 = e1.timeStamp;
+//     cdthumb.addEventListener('mouseup',(e2)=>{
+//         t2 = e2.timeStamp;
+//         if(Math.abs(t1-t2) > 300) {
+//             console.log("GIU CHUOT");
+//         }
+//     })
+//     console.log("YES");    
+// })
 
-cdthumb.addEventListener('mouseup',(e)=>{
-    console.log(e.type);
-    if(e.type == 'mouseup') {
-        alert('hold');
-    }
-})
